@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Callable
 import sys
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from ml_method_reports.reporting.adapters import ReportAdapter, ReportType, resolve_report_adapter
 from ml_method_reports.reporting.builders.generic import GenericClassificationReportBuilder
@@ -50,7 +51,7 @@ class ReportRequest:
     def with_data(
         self,
         *,
-        X_test: FeatureMatrix,
+        X_test: FeatureMatrix | None = None,
         X_train: FeatureMatrix | None = None,
         y_train: TargetVector | None = None,
         y_test: TargetVector | None = None,
@@ -175,6 +176,27 @@ class ReportRequest:
         )
         return report
 
+    def to_html(self, *, embed_images: bool = False) -> str:
+        from ml_method_reports.reporting.html_report import HtmlReportGenerator
+
+        if embed_images:
+            with TemporaryDirectory(prefix="ml-method-reports-") as temporary_dir:
+                output = Path(temporary_dir)
+                report = self._build_with_context(output_dir=output, assets_dir=output / "assets")[0]
+                return HtmlReportGenerator().render(report, embed_images=True, base_dir=output)
+
+        report = self.build()
+        return HtmlReportGenerator().render(report, embed_images=embed_images)
+
+    def display(self) -> ExperimentReport:
+        from ml_method_reports.reporting.notebook import display_report
+
+        with TemporaryDirectory(prefix="ml-method-reports-") as temporary_dir:
+            output = Path(temporary_dir)
+            report, _ = self._build_with_context(output_dir=output, assets_dir=output / "assets")
+            display_report(report, base_dir=output)
+            return report
+
     def save(self, output_dir: PathLike, *, stem: str | None = None) -> tuple[Path, Path]:
         output = Path(output_dir)
         context = self._context(output_dir=output, assets_dir=output / "assets")
@@ -197,11 +219,6 @@ class ReportRequest:
         return save_report_bundle(report, output, stem=resolved_stem, show_progress=show_progress)
 
     def _context(self, *, output_dir: Path, assets_dir: Path | None) -> ReportContext:
-        if self._X_test is None:
-            raise ValueError(
-                "Evaluation data is required before build() or save(); call "
-                "with_test_data(), with_evaluation_data(), or with_data(X_test=...)."
-            )
         return ReportContext(
             model=self._model,
             model_name=self._model_name or type(self._model).__name__,
@@ -217,6 +234,19 @@ class ReportRequest:
             assets_dir=assets_dir,
             metadata=self._metadata,
             options=self._options,
+        )
+
+    def _build_with_context(
+        self,
+        *,
+        output_dir: Path,
+        assets_dir: Path | None,
+    ) -> tuple[ExperimentReport, ReportAdapter | None]:
+        return _build_report(
+            self._context(output_dir=output_dir, assets_dir=assets_dir),
+            builder=self._builder,
+            report_factory=self._report_factory,
+            report_type=self._report_type,
         )
 
 

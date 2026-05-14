@@ -54,15 +54,22 @@ class ReportAdapter:
     report_type: str
     model_type: type
     default_stem: str
+    requires_test_data: bool = True
     requires_supervised_split: bool = False
 
     def supports(self, context: ReportContext) -> bool:
         return isinstance(context.model, self.model_type)
 
     def has_required_data(self, context: ReportContext) -> bool:
+        if self.requires_test_data and context.X_test is None:
+            return False
         if not self.requires_supervised_split:
             return True
-        return context.X_train is not None and context.y_train is not None and context.y_test is not None
+        return (
+            context.X_train is not None
+            and context.y_train is not None
+            and context.y_test is not None
+        )
 
     def build(self, context: ReportContext) -> ExperimentReport:
         raise NotImplementedError
@@ -74,6 +81,7 @@ class EtalonReportAdapter(ReportAdapter):
             "etalon",
             EtalonClassifier,
             "etalon_report",
+            True,
             requires_supervised_split=True,
         )
 
@@ -199,6 +207,7 @@ class LogisticRegressionReportAdapter(ReportAdapter):
             "logistic_regression",
             LogisticRegression,
             "logistic_regression_report",
+            True,
             requires_supervised_split=True,
         )
 
@@ -227,6 +236,7 @@ class DecisionTreeReportAdapter(ReportAdapter):
             "decision_tree",
             DecisionTreeClassifier,
             "decision_tree_report",
+            True,
             requires_supervised_split=True,
         )
 
@@ -255,6 +265,7 @@ class RandomForestReportAdapter(ReportAdapter):
             "random_forest",
             RandomForestClassifier,
             "random_forest_report",
+            True,
             requires_supervised_split=True,
         )
 
@@ -370,14 +381,21 @@ def resolve_report_adapter(
                     f"report_type={report_type!r} does not support model "
                     f"{type(context.model).__name__}."
                 )
+            if not adapter.has_required_data(context):
+                return None
             return adapter
     raise ValueError(f"Unsupported report_type {report_type!r}.")
 
 
 def _require_supervised_split(context: ReportContext, report_type: str) -> None:
-    if context.X_train is None or context.y_train is None or context.y_test is None:
+    if (
+        context.X_train is None
+        or context.X_test is None
+        or context.y_train is None
+        or context.y_test is None
+    ):
         raise ValueError(
-            f"report_type={report_type!r} requires X_train, y_train, and y_test."
+            f"report_type={report_type!r} requires X_train, X_test, y_train, and y_test."
         )
 
 

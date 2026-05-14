@@ -29,6 +29,7 @@ from ml_method_reports.reporting.html_report import (
     build_supervised_experiment_report,
 )
 from ml_method_reports.reporting.models import ExperimentReport, ReportSection
+from ml_method_reports.reporting.notebook import display_report, render_notebook_html
 from ml_method_reports.reporting.pdf_report import PdfExperimentReportGenerator
 from ml_method_reports.reporting.plots import (
     plot_bar_chart,
@@ -96,6 +97,7 @@ __all__ = [
     "TargetVector",
     "build_analysis_summary",
     "build_supervised_experiment_report",
+    "display_report",
     "format_report_value",
     "plot_bar_chart",
     "plot_cluster_projection",
@@ -105,6 +107,7 @@ __all__ = [
     "plot_model_accuracy_comparison",
     "project_to_2d",
     "report_for",
+    "render_notebook_html",
     "sanitize_table_rows",
     "to_report_value",
 ]

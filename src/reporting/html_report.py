@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import base64
 from datetime import datetime
 from html import escape
+import mimetypes
 from pathlib import Path
 
 from fpdf import FPDF
@@ -15,14 +17,23 @@ from ml_method_reports.reporting.types import ReportMetadata, ReportValue, Table
 
 
 class HtmlReportGenerator:
-    def render(self, report: ExperimentReport) -> str:
+    def render(
+        self,
+        report: ExperimentReport,
+        embed_images: bool = False,
+        base_dir: str | Path | None = None,
+    ) -> str:
         generated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         subtitle = f"<p class=\"subtitle\">{escape(report.subtitle)}</p>" if report.subtitle else ""
         metadata = to_report_value(report.metadata)
         metadata_rows = self._render_table(
             [{"Key": key, "Value": value} for key, value in metadata.items()]
         )
-        sections = "\n".join(self._render_section(section) for section in report.sections)
+        resolved_base_dir = Path(base_dir) if base_dir is not None else getattr(self, "_base_dir", Path.cwd())
+        sections = "\n".join(
+            self._render_section(section, embed_images=embed_images, base_dir=resolved_base_dir)
+            for section in report.sections
+        )
 
         return f"""<!doctype html>
 <html lang="en">
@@ -150,16 +161,22 @@ class HtmlReportGenerator:
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
         self._base_dir = path.parent
-        path.write_text(self.render(report), encoding="utf-8")
+        path.write_text(self.render(report, base_dir=path.parent), encoding="utf-8")
         return path
 
-    def _render_section(self, section: ReportSection) -> str:
+    def _render_section(
+        self,
+        section: ReportSection,
+        *,
+        embed_images: bool,
+        base_dir: Path,
+    ) -> str:
         content = (
             f"<p class=\"section-content\">{escape(section.content)}</p>"
             if section.content
             else ""
         )
-        image = self._render_image(section)
+        image = self._render_image(section, embed_images=embed_images, base_dir=base_dir)
         table = self._render_table(sanitize_table_rows(section.table or []))
         code = f"<pre><code>{escape(section.code)}</code></pre>" if section.code else ""
         return f"""<section>
@@ -170,10 +187,18 @@ class HtmlReportGenerator:
   {code}
 </section>"""
 
-    def _render_image(self, section: ReportSection) -> str:
+    def _render_image(self, section: ReportSection, *, embed_images: bool, base_dir: Path) -> str:
         if section.image_path is None:
             return ""
-        image_path = escape(str(section.image_path).replace("\\", "/"))
+        src = self._image_src(section.image_path, embed_images=embed_images, base_dir=base_dir)
+        if src is None:
+            missing = escape(str(section.image_path).replace("\\", "/"))
+            return (
+                "<p class=\"section-content\">"
+                f"Image unavailable: {missing}"
+                "</p>"
+            )
+        image_path = escape(src)
         caption = (
             f"<figcaption>{escape(section.image_caption)}</figcaption>"
             if section.image_caption
@@ -184,6 +209,30 @@ class HtmlReportGenerator:
             f"<img class=\"report-image\" src=\"{image_path}\" alt=\"{escape(section.title)}\">"
             f"{caption}</figure>"
         )
+
+    def _image_src(
+        self,
+        image_path: str | Path,
+        *,
+        embed_images: bool,
+        base_dir: Path,
+    ) -> str | None:
+        if not embed_images:
+            return str(image_path).replace("\\", "/")
+
+        resolved = self._resolve_image_path(image_path, base_dir)
+        if not resolved.exists() or not resolved.is_file():
+            return None
+        mime_type, _ = mimetypes.guess_type(resolved.name)
+        mime_type = mime_type or "application/octet-stream"
+        encoded = base64.b64encode(resolved.read_bytes()).decode("ascii")
+        return f"data:{mime_type};base64,{encoded}"
+
+    def _resolve_image_path(self, image_path: str | Path, base_dir: Path) -> Path:
+        path = Path(image_path)
+        if path.is_absolute():
+            return path
+        return base_dir / path
 
     def _render_table(self, rows: TableRows) -> str:
         if not rows:

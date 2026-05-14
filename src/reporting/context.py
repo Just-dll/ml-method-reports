@@ -17,7 +17,7 @@ class ReportContext:
     model: object
     model_name: str
     X_train: FeatureMatrix | None
-    X_test: FeatureMatrix
+    X_test: FeatureMatrix | None
     y_train: TargetVector | None
     y_test: TargetVector | None
     predictions: PredictionVector | None

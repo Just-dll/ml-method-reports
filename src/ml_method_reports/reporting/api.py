@@ -9,7 +9,7 @@ from ml_method_reports.reporting.adapters import ReportAdapter, ReportType, reso
 from ml_method_reports.reporting.builders.generic import GenericClassificationReportBuilder
 from ml_method_reports.reporting.context import ReportContext
 from ml_method_reports.reporting.models import ExperimentReport
-from ml_method_reports.reporting.saving import save_report_bundle
+from ml_method_reports.reporting.saving import save_html_report, save_pdf_report, save_report_bundle
 from ml_method_reports.reporting.types import (
     FeatureMatrix,
     PathLike,
@@ -199,24 +199,19 @@ class ReportRequest:
 
     def save(self, output_dir: PathLike, *, stem: str | None = None) -> tuple[Path, Path]:
         output = Path(output_dir)
-        context = self._context(output_dir=output, assets_dir=output / "assets")
-        show_progress = bool(self._options.get("show_progress", True))
-        _report_progress(
-            show_progress,
-            f"Building {context.model_name} report data...",
-        )
-        report, adapter = _build_report(
-            context,
-            builder=self._builder,
-            report_factory=self._report_factory,
-            report_type=self._report_type,
-        )
+        report, adapter, show_progress = self._build_for_export(output_dir=output)
         resolved_stem = stem or _default_stem(adapter, self._builder, self._report_factory)
-        _report_progress(
-            show_progress,
-            f"Report data ready: {len(report.sections)} sections.",
-        )
         return save_report_bundle(report, output, stem=resolved_stem, show_progress=show_progress)
+
+    def save_html(self, output_path: PathLike) -> Path:
+        output = Path(output_path)
+        report, _, show_progress = self._build_for_export(output_dir=output.parent)
+        return save_html_report(report, output, show_progress=show_progress)
+
+    def save_pdf(self, output_path: PathLike) -> Path:
+        output = Path(output_path)
+        report, _, show_progress = self._build_for_export(output_dir=output.parent)
+        return save_pdf_report(report, output, show_progress=show_progress)
 
     def _context(self, *, output_dir: Path, assets_dir: Path | None) -> ReportContext:
         return ReportContext(
@@ -248,6 +243,25 @@ class ReportRequest:
             report_factory=self._report_factory,
             report_type=self._report_type,
         )
+
+    def _build_for_export(self, *, output_dir: Path) -> tuple[ExperimentReport, ReportAdapter | None, bool]:
+        context = self._context(output_dir=output_dir, assets_dir=output_dir / "assets")
+        show_progress = bool(self._options.get("show_progress", True))
+        _report_progress(
+            show_progress,
+            f"Building {context.model_name} report data...",
+        )
+        report, adapter = _build_report(
+            context,
+            builder=self._builder,
+            report_factory=self._report_factory,
+            report_type=self._report_type,
+        )
+        _report_progress(
+            show_progress,
+            f"Report data ready: {len(report.sections)} sections.",
+        )
+        return report, adapter, show_progress
 
 
 def _build_report(

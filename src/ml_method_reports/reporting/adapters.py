@@ -316,10 +316,14 @@ class KMeansReportAdapter(ReportAdapter):
     def __init__(self) -> None:
         super().__init__("kmeans", KMeans, "kmeans_report")
 
+    def has_required_data(self, context: ReportContext) -> bool:
+        return context.X_test is not None or context.X_train is not None
+
     def build(self, context: ReportContext) -> ExperimentReport:
+        X = context.X_test if context.X_test is not None else context.X_train
         report_input = KMeansReportInput(
             model=context.model,
-            X=context.X_test,
+            X=X,
             feature_names=context.feature_names,
             true_labels=context.y_test,
             dataset_source=context.dataset_source,
@@ -334,10 +338,14 @@ class AgglomerativeReportAdapter(ReportAdapter):
     def __init__(self) -> None:
         super().__init__("agglomerative", AgglomerativeClustering, "agglomerative_report")
 
+    def has_required_data(self, context: ReportContext) -> bool:
+        return context.X_test is not None or context.X_train is not None
+
     def build(self, context: ReportContext) -> ExperimentReport:
+        X = context.X_test if context.X_test is not None else context.X_train
         report_input = AgglomerativeReportInput(
             model=context.model,
-            X=context.X_test,
+            X=X,
             feature_names=context.feature_names,
             true_labels=context.y_test,
             dataset_source=context.dataset_source,

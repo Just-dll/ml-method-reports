@@ -10,4 +10,4 @@ Reports become richer as more context is provided. This lets you start with a fi
 | model + X_test + y_test | metrics, confusion matrix, error analysis |
 | full train/test data | full educational report with visualizations |
 
-Use `with_training_data(...)`, `with_test_data(...)`, or `with_data(...)` to provide context.
+Use `with_training_data(...)` and `with_test_data(...)` to provide context explicitly. Use `with_data(...)` as a compact shortcut when all arrays are already available together.

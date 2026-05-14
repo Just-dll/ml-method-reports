@@ -36,6 +36,8 @@ class GenericClassificationReportBuilder:
         metadata = {
             "model": context.model_name,
             "model_class": type(context.model).__name__,
+            "model_module": type(context.model).__module__,
+            "report_type": "generic",
             "dataset_source": context.dataset_source,
             "target": context.target_name,
             "features": feature_count,
@@ -159,6 +161,8 @@ class GenericClassificationReportBuilder:
         return [
             {"item": "model name", "value": self._context.model_name},
             {"item": "model class", "value": type(self._context.model).__name__},
+            {"item": "model module", "value": type(self._context.model).__module__},
+            {"item": "report type", "value": "generic"},
             {"item": "dataset source", "value": self._context.dataset_source},
             {"item": "target", "value": self._context.target_name},
             {"item": "feature count", "value": len(names) if names else "unknown"},
@@ -232,7 +236,10 @@ class GenericClassificationReportBuilder:
     def _probability_rows(self, limit: int = 5) -> TableRows:
         if self._context.X_test is None or not hasattr(self._context.model, "predict_proba"):
             return []
-        probabilities = np.asarray(self._context.model.predict_proba(self._context.X_test))
+        try:
+            probabilities = np.asarray(self._context.model.predict_proba(self._context.X_test))
+        except (AttributeError, NotImplementedError):
+            return []
         if probabilities.ndim != 2:
             return []
         classes = getattr(self._context.model, "classes_", range(probabilities.shape[1]))
@@ -251,7 +258,10 @@ class GenericClassificationReportBuilder:
     def _score_rows(self, limit: int = 5) -> TableRows:
         if self._context.X_test is None or not hasattr(self._context.model, "decision_function"):
             return []
-        scores = np.asarray(self._context.model.decision_function(self._context.X_test))
+        try:
+            scores = np.asarray(self._context.model.decision_function(self._context.X_test))
+        except (AttributeError, NotImplementedError):
+            return []
         rows: TableRows = []
         if scores.ndim == 1:
             for sample_index, score in enumerate(scores[:limit]):

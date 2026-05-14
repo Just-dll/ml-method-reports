@@ -143,7 +143,10 @@ def error_analysis_text(rows: TableRows) -> str:
 def probability_rows(model: object, query: FeatureMatrix) -> TableRows:
     if not hasattr(model, "predict_proba"):
         return []
-    probabilities = model.predict_proba(query)[0]
+    try:
+        probabilities = model.predict_proba(query)[0]
+    except (AttributeError, NotImplementedError):
+        return []
     classes = getattr(model, "classes_", range(len(probabilities)))
     return [
         {"class": to_python(class_label), "probability": float(probability)}
@@ -154,7 +157,10 @@ def probability_rows(model: object, query: FeatureMatrix) -> TableRows:
 def score_rows(model: object, query: FeatureMatrix) -> TableRows:
     if not hasattr(model, "decision_function"):
         return []
-    scores = np.asarray(model.decision_function(query)).ravel()
+    try:
+        scores = np.asarray(model.decision_function(query)).ravel()
+    except (AttributeError, NotImplementedError):
+        return []
     if scores.shape[0] == 1:
         return [{"score": "decision_function", "value": float(scores[0])}]
     classes = getattr(model, "classes_", range(len(scores)))

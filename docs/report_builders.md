@@ -19,5 +19,9 @@ report_for(model).with_builder(MyReportBuilder).build()
 Use generic reports when no specialized adapter exists:
 
 ```python
-report_for(model).as_generic().with_data(...).save("runtime/reports/generic")
+report_for(model) \
+    .as_generic() \
+    .with_training_data(...) \
+    .with_test_data(...) \
+    .save("runtime/reports/generic")
 ```

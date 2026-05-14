@@ -44,6 +44,28 @@ def test_save_still_generates_html_and_pdf(tmp_path) -> None:
     assert pdf_path.exists()
 
 
+def test_save_html_generates_only_html_report(tmp_path) -> None:
+    model, X, y = _model()
+    html_path = tmp_path / "single.html"
+
+    saved_path = report_for(model).with_test_data(X_test=X, y_test=y).save_html(html_path)
+
+    assert saved_path == html_path
+    assert html_path.exists()
+    assert not (tmp_path / "single.pdf").exists()
+
+
+def test_save_pdf_generates_only_pdf_report(tmp_path) -> None:
+    model, X, y = _model()
+    pdf_path = tmp_path / "single.pdf"
+
+    saved_path = report_for(model).with_test_data(X_test=X, y_test=y).save_pdf(pdf_path)
+
+    assert saved_path == pdf_path
+    assert pdf_path.exists()
+    assert not (tmp_path / "single.html").exists()
+
+
 def test_render_embed_images_uses_base64_data_uri(tmp_path) -> None:
     image_bytes = base64.b64decode(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGA"

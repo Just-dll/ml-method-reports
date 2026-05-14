@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ml-method-reports"
+version = "0.1.0"
+description = "Educational ML method reports for etalon and sklearn algorithms."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fpdf2",
+  "matplotlib",
+  "numpy",
+  "pandas",
+  "scikit-learn",
+  "scipy",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+dev = ["pytest", "ruff", "mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+filterwarnings = ["error"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["B008", "E501"]
+
+[tool.setuptools]
+packages = [
+  "ml_method_reports",
+  "ml_method_reports.algorithms",
+  "ml_method_reports.reporting",
+  "ml_method_reports.reporting.builders",
+]
+package-dir = { "ml_method_reports" = "src" }

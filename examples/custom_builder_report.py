@@ -13,12 +13,6 @@ if str(SOURCE_ROOT) not in sys.path:
 if str(Path(__file__).resolve().parent) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from ml_method_reports.reporting import (  # noqa: E402
-    ExperimentReport,
-    ReportContext,
-    ReportSection,
-    report_for,
-)
 from report_example_utils import (  # noqa: E402
     DATASET_SOURCE,
     FEATURE_NAMES,
@@ -27,6 +21,13 @@ from report_example_utils import (  # noqa: E402
     log_saved_report,
     split_classification_dataset,
     standard_scale_frames,
+)
+
+from ml_method_reports.reporting import (  # noqa: E402
+    ExperimentReport,
+    ReportContext,
+    ReportSection,
+    report_for,
 )
 
 

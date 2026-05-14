@@ -1,29 +1,58 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "ml-method-reports"
 version = "0.1.0"
-description = "Educational ML method reports for etalon and sklearn algorithms."
+description = "Educational toolkit for interactive exploration, explanation, visualization, and reporting of machine learning methods."
 readme = "README.md"
 requires-python = ">=3.11"
+authors = [
+  { name = "ml-method-reports contributors" },
+]
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["machine-learning", "education", "reports", "visualization", "scikit-learn"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
-  "fpdf2",
-  "matplotlib",
   "numpy",
   "pandas",
   "scikit-learn",
+  "matplotlib",
   "scipy",
+  "fpdf2",
 ]
 
 [project.optional-dependencies]
-test = ["pytest"]
-dev = ["pytest", "ruff", "mypy"]
 notebook = [
   "ipython",
   "jupyter",
 ]
+test = [
+  "pytest",
+]
+dev = [
+  "pytest",
+  "ruff",
+  "mypy",
+  "build",
+  "twine",
+]
+
+[project.urls]
+Homepage = "https://github.com/Just-dll/ml-method-reports"
+Documentation = "https://github.com/Just-dll/ml-method-reports/tree/main/docs"
+Issues = "https://github.com/Just-dll/ml-method-reports/issues"
+Source = "https://github.com/Just-dll/ml-method-reports"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -39,10 +68,7 @@ select = ["E", "F", "I", "UP", "B"]
 ignore = ["B008", "E501"]
 
 [tool.setuptools]
-packages = [
-  "ml_method_reports",
-  "ml_method_reports.algorithms",
-  "ml_method_reports.reporting",
-  "ml_method_reports.reporting.builders",
-]
-package-dir = { "ml_method_reports" = "src" }
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]

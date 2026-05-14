@@ -12,7 +12,6 @@ SOURCE_ROOT = PROJECT_ROOT / "src"
 if str(SOURCE_ROOT) not in sys.path:
     sys.path.insert(0, str(SOURCE_ROOT))
 
-from ml_method_reports.reporting import report_for  # noqa: E402
 from report_example_utils import (  # noqa: E402
     DATASET_SOURCE,
     TARGET_NAME,
@@ -21,6 +20,7 @@ from report_example_utils import (  # noqa: E402
 )
 
 from ml_method_reports import EtalonClassifier  # noqa: E402
+from ml_method_reports.reporting import report_for  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:

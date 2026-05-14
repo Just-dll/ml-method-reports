@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 
 import numpy as np
+
 from ml_method_reports.reporting.types import ReportValue, TableRows
 
 

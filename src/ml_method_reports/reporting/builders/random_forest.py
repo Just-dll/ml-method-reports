@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+
 from ml_method_reports.reporting.builders.base import ReportAssetBuilder, ReportBuilder
 from ml_method_reports.reporting.builders.sklearn_common import (
     as_2d_array,
@@ -28,7 +30,6 @@ from ml_method_reports.reporting.types import (
     ScalingParams,
     TargetVector,
 )
-from sklearn.ensemble import RandomForestClassifier
 
 
 @dataclass(slots=True)

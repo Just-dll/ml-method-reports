@@ -3,9 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-from ml_method_reports.reporting.types import PathLike, TableRows
 from numpy.typing import ArrayLike
 from sklearn.decomposition import PCA
+
+from ml_method_reports.reporting.types import PathLike, TableRows
 
 
 def project_to_2d(

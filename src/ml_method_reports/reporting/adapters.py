@@ -5,6 +5,13 @@ from typing import Literal
 
 import numpy as np
 import pandas as pd
+from sklearn.cluster import AgglomerativeClustering, KMeans
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+
 from ml_method_reports.algorithms import EtalonClassifier, evaluate_predictions
 from ml_method_reports.reporting.builders import (
     AgglomerativeReportBuilder,
@@ -28,12 +35,6 @@ from ml_method_reports.reporting.builders import (
 from ml_method_reports.reporting.context import ReportContext
 from ml_method_reports.reporting.models import ExperimentReport
 from ml_method_reports.reporting.types import TableRows
-from sklearn.cluster import AgglomerativeClustering, KMeans
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
-from sklearn.tree import DecisionTreeClassifier
 
 ReportType = Literal[
     "auto",

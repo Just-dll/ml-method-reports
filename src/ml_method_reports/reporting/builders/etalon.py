@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
 from ml_method_reports.algorithms import (
     EtalonClassifier,
     EtalonEvaluationSummary,

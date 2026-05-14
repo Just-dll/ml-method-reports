@@ -4,6 +4,15 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from numpy.typing import ArrayLike
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
+
 from ml_method_reports.reporting.models import ReportSection
 from ml_method_reports.reporting.plots import plot_bar_chart
 from ml_method_reports.reporting.types import (
@@ -14,14 +23,6 @@ from ml_method_reports.reporting.types import (
     ScalingParams,
     TableRows,
     TargetVector,
-)
-from numpy.typing import ArrayLike
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
 )
 
 

@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
+from sklearn.linear_model import LogisticRegression
+
 from ml_method_reports.reporting.builders.base import ReportAssetBuilder, ReportBuilder
 from ml_method_reports.reporting.builders.sklearn_common import (
     as_2d_array,
@@ -31,7 +33,6 @@ from ml_method_reports.reporting.types import (
     TableRows,
     TargetVector,
 )
-from sklearn.linear_model import LogisticRegression
 
 
 @dataclass(slots=True)

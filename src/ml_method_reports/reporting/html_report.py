@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import base64
+import mimetypes
 from datetime import datetime
 from html import escape
-import mimetypes
 from pathlib import Path
 
 from fpdf import FPDF
+
 from ml_method_reports.reporting.models import ExperimentReport, ReportSection
 from ml_method_reports.reporting.serialization import (
     format_report_value,

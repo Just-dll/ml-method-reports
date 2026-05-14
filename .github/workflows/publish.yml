@@ -1,0 +1,25 @@
+name: publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install build tools
+        run: python -m pip install --upgrade build twine
+      - name: Build package
+        run: python -m build
+      - name: Check package
+        run: python -m twine check dist/*
+      # Enable after configuring PyPI Trusted Publishing for this repository.
+      # - name: Publish to PyPI
+      #   uses: pypa/gh-action-pypi-publish@release/v1

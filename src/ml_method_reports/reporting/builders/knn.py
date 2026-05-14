@@ -6,6 +6,15 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
+from sklearn.neighbors import KNeighborsClassifier
+
 from ml_method_reports.reporting.builders.base import ReportAssetBuilder, ReportBuilder
 from ml_method_reports.reporting.models import ExperimentReport, ReportSection
 from ml_method_reports.reporting.plots import plot_knn_neighbor_space, project_to_2d
@@ -17,14 +26,6 @@ from ml_method_reports.reporting.types import (
     TableRows,
     TargetVector,
 )
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-)
-from sklearn.neighbors import KNeighborsClassifier
 
 
 @dataclass(slots=True)

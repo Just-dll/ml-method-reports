@@ -15,8 +15,9 @@ if str(SOURCE_ROOT) not in sys.path:
 if str(Path(__file__).resolve().parent) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from ml_method_reports.reporting import report_for  # noqa: E402
 from report_example_utils import log_saved_report, standard_scale_frames  # noqa: E402
+
+from ml_method_reports.reporting import report_for  # noqa: E402
 
 FEATURE_NAMES = ["feature_a", "feature_b", "feature_c", "feature_d"]
 

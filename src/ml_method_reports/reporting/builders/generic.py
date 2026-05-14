@@ -2,6 +2,15 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
+
 from ml_method_reports.reporting.context import ReportContext
 from ml_method_reports.reporting.models import ExperimentReport, ReportSection
 from ml_method_reports.reporting.serialization import sanitize_table_rows, to_report_value
@@ -12,14 +21,6 @@ from ml_method_reports.reporting.types import (
     ReportValue,
     TableRows,
     TargetVector,
-)
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
-    confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
 )
 
 

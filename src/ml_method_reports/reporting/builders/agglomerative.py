@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
+from sklearn.cluster import AgglomerativeClustering
+
 from ml_method_reports.reporting.builders.base import ReportAssetBuilder, ReportBuilder
 from ml_method_reports.reporting.builders.sklearn_common import (
     as_2d_array,
@@ -20,7 +22,6 @@ from ml_method_reports.reporting.plots import (
     project_to_2d,
 )
 from ml_method_reports.reporting.types import FeatureMatrix, ScalingParams, TableRows, TargetVector
-from sklearn.cluster import AgglomerativeClustering
 
 
 @dataclass(slots=True)

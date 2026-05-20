@@ -188,14 +188,13 @@ class ReportRequest:
         report = self.build()
         return HtmlReportGenerator().render(report, embed_images=embed_images)
 
-    def display(self) -> ExperimentReport:
+    def display(self) -> None:
         from ml_method_reports.reporting.notebook import display_report
 
         with TemporaryDirectory(prefix="ml-method-reports-") as temporary_dir:
             output = Path(temporary_dir)
             report, _ = self._build_with_context(output_dir=output, assets_dir=output / "assets")
             display_report(report, base_dir=output)
-            return report
 
     def save(self, output_dir: PathLike, *, stem: str | None = None) -> tuple[Path, Path]:
         output = Path(output_dir)

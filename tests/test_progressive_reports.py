@@ -172,7 +172,7 @@ def test_etalon_classifier_fitted_model_only_reports_centers() -> None:
     assert _table_contains(report, "etalon_centers_")
 
 
-def test_display_model_only_returns_report(monkeypatch) -> None:
+def test_display_model_only_report(monkeypatch) -> None:
     X_train, _, y_train, _ = _classification_data()
     model = LogisticRegression(max_iter=300).fit(X_train, y_train)
     displayed: dict[str, ExperimentReport] = {}
@@ -185,11 +185,11 @@ def test_display_model_only_returns_report(monkeypatch) -> None:
 
     monkeypatch.setattr(notebook, "display_report", fake_display_report)
 
-    report = report_for(model).display()
+    result = report_for(model).display()
 
-    assert report is displayed["report"]
+    assert result is None
     assert displayed["base_dir"] is not None
-    assert isinstance(report, ExperimentReport)
+    assert isinstance(displayed["report"], ExperimentReport)
 
 
 def test_svc_without_probability_skips_unavailable_probability_section() -> None:

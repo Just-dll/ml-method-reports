@@ -133,6 +133,8 @@ def test_display_uses_notebook_renderer_when_ipython_available(monkeypatch) -> N
     notebook.display_report(ExperimentReport(title="Inline demo"))
 
     assert "Inline demo" in str(calls["html"])
+    assert "ml-method-reports-frame" in str(calls["html"])
+    assert "srcdoc=" in str(calls["html"])
     assert isinstance(calls["displayed"], FakeHTML)
 
 
@@ -158,8 +160,8 @@ def test_display_model_only_returns_report(monkeypatch) -> None:
 
     monkeypatch.setattr(notebook, "display_report", fake_display_report)
 
-    report = report_for(model).display()
+    result = report_for(model).display()
 
-    assert report is displayed["report"]
+    assert result is None
     assert displayed["base_dir"] is not None
-    assert isinstance(report, ExperimentReport)
+    assert isinstance(displayed["report"], ExperimentReport)

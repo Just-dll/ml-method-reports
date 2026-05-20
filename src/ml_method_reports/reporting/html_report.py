@@ -54,6 +54,7 @@ class HtmlReportGenerator:
       --code: #111827;
     }}
     * {{ box-sizing: border-box; }}
+    html {{ overflow-x: hidden; }}
     body {{
       margin: 0;
       color: var(--ink);
@@ -65,8 +66,10 @@ class HtmlReportGenerator:
     }}
     main {{
       max-width: 1080px;
+      width: 100%;
       margin: 0 auto;
       padding: 42px 20px 56px;
+      overflow-x: hidden;
     }}
     header {{
       padding: 34px;
@@ -98,12 +101,15 @@ class HtmlReportGenerator:
       overflow: hidden;
       border: 1px solid var(--line);
       border-radius: 14px;
+      table-layout: fixed;
     }}
     th, td {{
       padding: 10px 12px;
       border-bottom: 1px solid var(--line);
       text-align: left;
       vertical-align: top;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }}
     th {{
       background: var(--accent-soft);
@@ -117,13 +123,21 @@ class HtmlReportGenerator:
     pre {{
       margin: 16px 0 0;
       padding: 16px;
+      max-width: 100%;
       color: #e5edf7;
       background: var(--code);
       border-radius: 14px;
       overflow-x: auto;
       white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }}
-    code {{ font-family: "Cascadia Mono", Consolas, monospace; }}
+    code {{
+      font-family: "Cascadia Mono", Consolas, monospace;
+      white-space: inherit;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }}
     img.report-image {{
       display: block;
       max-width: 100%;

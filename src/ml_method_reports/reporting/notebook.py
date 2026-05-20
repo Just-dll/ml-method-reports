@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from html import escape
 from pathlib import Path
 
 from ml_method_reports.reporting.html_report import HtmlReportGenerator
@@ -12,7 +13,13 @@ NOTEBOOK_EXTRA_ERROR = (
 
 
 def render_notebook_html(report: ExperimentReport, base_dir: str | Path | None = None) -> str:
-    return HtmlReportGenerator().render(report, embed_images=True, base_dir=base_dir)
+    html = HtmlReportGenerator().render(report, embed_images=True, base_dir=base_dir)
+    return (
+        '<iframe class="ml-method-reports-frame" '
+        'style="width: 100%; height: 900px; border: 0; border-radius: 12px;" '
+        f'srcdoc="{escape(html, quote=True)}">'
+        "</iframe>"
+    )
 
 
 def display_report(report: ExperimentReport, base_dir: str | Path | None = None) -> None:
